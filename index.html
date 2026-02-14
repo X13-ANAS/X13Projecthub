@@ -46,7 +46,7 @@
                         <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="submit">Submit Project</a>
                         <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="submissions">My Submissions</a>
                         <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="guidelines">Guidelines</a>
-                        <a href="#" class="border-transparent text-red-500 hover:text-red-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="teacher">Teacher Dashboard</a>
+<a href="#" class="border-transparent text-red-500 hover:text-red-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="teacher">Teacher Dashboard</a>
                     </div>
                 </div>
                 <div class="flex items-center">
@@ -234,32 +234,29 @@
             </div>
         </section>
 
-        <section id="teacher-page" class="page hidden fade-in">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">
-                    Teacher Dashboard 
-                    <span id="teacherViewLabel" class="ml-2 text-sm font-normal text-white bg-blue-600 px-3 py-1 rounded-full">All Courses</span>
-                </h2>
-                <button onclick="loadTeacherDashboard()" class="text-primary hover:text-secondary text-sm font-medium">
-                    <i class="fas fa-sync-alt"></i> Refresh List
-                </button>
-            </div>
-            
-            <div class="bg-white rounded-xl shadow-sm overflow-hidden overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Project</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="teacherTableBody" class="bg-white divide-y divide-gray-200">
-                    </tbody>
-                </table>
-            </div>
-        </section>
+<section id="teacher-page" class="page hidden fade-in">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Teacher Dashboard</h2>
+        <button onclick="loadTeacherDashboard()" class="text-primary hover:text-secondary text-sm font-medium">
+            <i class="fas fa-sync-alt"></i> Refresh List
+        </button>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Project</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
+                </tr>
+            </thead>
+            <tbody id="teacherTableBody" class="bg-white divide-y divide-gray-200">
+                </tbody>
+        </table>
+    </div>
+</section>
     </main>
 
     <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
@@ -325,36 +322,29 @@
     <script>
     // --- Global State ---
     let currentUser = null;
-    const API_URL = '/api'; // UPDATED: Relative path for deployment
+    const API_URL = '/api';
 
-    // --- Navigation Logic (WITH COURSE FILTER) ---
-    // List of valid courses from your dropdown
-    const VALID_COURSES = ["CCF", "GIT", "ML", "BWD", "SE", "DA", "AD", "FP"];
-
+    // --- Navigation Logic (WITH LOCK) ---
     function showPage(pageId) {
         // 1. SECURITY CHECK for Teacher Page
         if (pageId === 'teacher') {
-            const isAuthorized = sessionStorage.getItem('teacherAuth');
+            const isAuthorized = sessionStorage.getItem('adminUnlocked');
             
             if (!isAuthorized) {
-                const pin = prompt("🔒 TEACHER ACCESS\n\n• For ALL Courses: Enter 'X131013'\n• For specific course: Enter Course Name (e.g. 'ML', 'GIT')");
+                const pin = prompt("🔒 Enter Teacher Access PIN:");
                 
+                // HARDCODED PIN: "X131013"
                 if (pin === "X131013") {
-                    sessionStorage.setItem('teacherAuth', 'ALL');
-                    alert("✅ Master Access Granted");
-                    loadTeacherDashboard();
-                } 
-                // Check if PIN matches a course name (Case insensitive check)
-                else if (VALID_COURSES.includes(pin.toUpperCase())) {
-                    sessionStorage.setItem('teacherAuth', pin.toUpperCase());
-                    alert(`✅ Access Granted: ${pin.toUpperCase()} Instructor`);
-                    loadTeacherDashboard();
+                    sessionStorage.setItem('adminUnlocked', 'true'); // Remember login
+                    alert("Access Granted");
+                    loadTeacherDashboard(); // Load data immediately
                 } else {
-                    alert("❌ Invalid PIN. Access Denied.");
-                    return; // Stop navigation
+                    alert("❌ Access Denied!");
+                    return; // Stop! Do not show the page.
                 }
             } else {
-                loadTeacherDashboard(); // Already logged in
+                // Already authorized? Just refresh data
+                loadTeacherDashboard();
             }
         }
 
@@ -398,15 +388,21 @@
         const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
 
         if (currentUser) {
+            // Logged In
             authButtons.classList.add('hidden');
             userProfile.classList.remove('hidden');
             document.getElementById('userNameDisplay').textContent = currentUser.name;
+            
+            // Mobile
             mobileLoginBtn.classList.add('hidden');
             mobileSignupBtn.classList.add('hidden');
             mobileLogoutBtn.classList.remove('hidden');
         } else {
+            // Guest
             authButtons.classList.remove('hidden');
             userProfile.classList.add('hidden');
+            
+            // Mobile
             mobileLoginBtn.classList.remove('hidden');
             mobileSignupBtn.classList.remove('hidden');
             mobileLogoutBtn.classList.add('hidden');
@@ -423,6 +419,7 @@
 
     document.getElementById('loginBtn').addEventListener('click', () => toggleModal(loginModal, true));
     document.getElementById('mobileLoginBtn').addEventListener('click', () => toggleModal(loginModal, true));
+    
     document.getElementById('signupBtn').addEventListener('click', () => toggleModal(signupModal, true));
     document.getElementById('mobileSignupBtn').addEventListener('click', () => toggleModal(signupModal, true));
 
@@ -502,7 +499,7 @@
     // 3. Logout
     function logout() {
         currentUser = null;
-        sessionStorage.removeItem('teacherAuth'); // Clear Teacher Session
+        sessionStorage.removeItem('adminUnlocked'); // Lock teacher dashboard again
         updateUI();
         document.getElementById('submissionsTableBody').innerHTML = `
             <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Please login to view submissions.</td></tr>
@@ -589,7 +586,7 @@
             }
 
             projects.forEach(p => {
-                const webPath = p.file_path.replace(/\\/g, '/'); // Fix Windows paths
+                const webPath = p.file_path.replace(/\\/g, '/');
                 // Status Color Logic
                 let badgeColor = 'bg-yellow-100 text-yellow-800'; // Default: Under Review
                 if (p.status === 'Approved') badgeColor = 'bg-green-100 text-green-800';
@@ -606,7 +603,7 @@
                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeColor}">${p.status}</span>
                         </td>
                         <td class="px-6 py-4 text-right text-sm font-medium">
-                            <a href="/${webPath}" target="_blank" class="text-primary hover:text-secondary font-bold">Download</a>
+                           <a href="/${p.file_path}" target="_blank"  class="text-primary hover:text-secondary font-bold">Download</a>
                         </td>
                     </tr>
                 `;
@@ -618,38 +615,25 @@
         }
     }
 
-    // --- TEACHER FUNCTIONS (FILTERED) ---
+    // --- TEACHER FUNCTIONS ---
 
-    // 7. Load Filtered Submissions (Teacher)
+    // 7. Load All Submissions (Teacher)
     async function loadTeacherDashboard() {
         const tbody = document.getElementById('teacherTableBody');
-        const viewLabel = document.getElementById('teacherViewLabel');
-        
-        // 1. Get Auth Type from Session
-        const authType = sessionStorage.getItem('teacherAuth'); 
-        viewLabel.textContent = (authType === 'ALL') ? "All Courses" : authType + " Only";
-
         tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Loading...</td></tr>';
 
         try {
             const res = await fetch(`${API_URL}/admin/submissions`);
-            const allProjects = await res.json();
-            
-            // 2. Filter Logic
-            let displayProjects = allProjects;
-            if (authType !== 'ALL' && authType) {
-                // Filter where project course matches the PIN entered
-                displayProjects = allProjects.filter(p => p.course === authType);
-            }
+            const projects = await res.json();
 
             tbody.innerHTML = '';
-            if (displayProjects.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No submissions found for this category.</td></tr>';
+            if (projects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No submissions yet.</td></tr>';
                 return;
             }
 
-            displayProjects.forEach(p => {
-                const webPath = p.file_path.replace(/\\/g, '/'); // Fix Windows paths
+            projects.forEach(p => {
+                const webPath = p.file_path.replace(/\\/g, '/');
                 
                 const statusOptions = ['Under Review', 'Approved', 'Revision Needed', 'Rejected']
                     .map(s => `<option value="${s}" ${p.status === s ? 'selected' : ''}>${s}</option>`)
@@ -672,7 +656,7 @@
                             </select>
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="/${webPath}" target="_blank" class="text-primary hover:text-secondary text-sm font-medium">View File</a>
+                           <a href="/${p.file_path}" target="_blank"  class="text-primary hover:text-secondary text-sm font-medium">View File</a>
                         </td>
                     </tr>
                 `;
@@ -705,6 +689,6 @@
     
     // Initialize Default View
     updateUI();
-    </script>
+</script>
 </body>
 </html>
