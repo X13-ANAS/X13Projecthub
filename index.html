@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectHub | College Project Submission Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#1e40af',
+                        accent: '#3b82f6',
+                        light: '#f0f9ff',
+                        dark: '#0f172a'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        .file-input-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .file-input-wrapper input[type=file] { position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center cursor-pointer nav-link" data-page="home">
+                        <i class="fas fa-graduation-cap text-primary text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-900">ProjectHub</span>
+                    </div>
+                    <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                        <a href="#" class="border-primary text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link active" data-page="home">Home</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="submit">Submit Project</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="submissions">My Submissions</a>
+                        <a href="#" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="guidelines">Guidelines</a>
+<a href="#" class="border-transparent text-red-500 hover:text-red-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium nav-link" data-page="teacher">Teacher Dashboard</a>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="hidden md:flex md:items-center md:ml-6" id="authButtons">
+                        <button id="loginBtn" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">Login</button>
+                        <button id="signupBtn" class="ml-4 bg-primary hover:bg-secondary text-white px-4 py-2 rounded-md text-sm font-medium">Sign Up</button>
+                    </div>
+                    <div id="userProfile" class="hidden md:flex md:items-center md:ml-6">
+                        <span id="userNameDisplay" class="text-gray-900 font-medium mr-4">User</span>
+                        <button id="logoutBtn" class="text-gray-500 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium">Logout</button>
+                    </div>
+                    
+                    <div class="ml-4 flex items-center md:hidden">
+                        <button id="mobileMenuBtn" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div class="pt-2 pb-4 space-y-1 px-4">
+                <a href="#" class="block border-l-4 border-primary text-primary bg-blue-50 py-2 pl-3 pr-4 text-base font-medium nav-link" data-page="home">Home</a>
+                <a href="#" class="block border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-700 py-2 pl-3 pr-4 text-base font-medium nav-link" data-page="submit">Submit Project</a>
+                <a href="#" class="block border-l-4 border-transparent text-gray-500 hover:bg-gray-50 hover:text-gray-700 py-2 pl-3 pr-4 text-base font-medium nav-link" data-page="submissions">My Submissions</a>
+                <div class="border-t border-gray-200 mt-2 pt-2">
+                    <button id="mobileLoginBtn" class="block w-full text-left px-3 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50">Login</button>
+                    <button id="mobileSignupBtn" class="block w-full text-left px-3 py-2 text-base font-medium text-gray-500 hover:text-gray-900 hover:bg-gray-50">Sign Up</button>
+                    <button id="mobileLogoutBtn" class="hidden block w-full text-left px-3 py-2 text-base font-medium text-red-500 hover:text-red-700 hover:bg-gray-50">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <section id="home-page" class="page fade-in">
+            <div class="text-center mb-12">
+                <h1 class="text-4xl font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                    <span class="block">Submit Your College Projects</span>
+                    <span class="block text-primary mt-2">Effortlessly & Securely</span>
+                </h1>
+                <p class="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                    ProjectHub provides a streamlined platform for students to submit academic projects with ease.
+                </p>
+                <div class="mt-8">
+                    <button class="nav-link bg-primary hover:bg-secondary text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300" data-page="submit">
+                        Submit Your Project
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-file-upload text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Easy Submission</h3>
+                    <p class="text-gray-600">Upload multiple files in various formats with our intuitive submission form.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-history text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Track Submissions</h3>
+                    <p class="text-gray-600">Monitor all your past submissions in one convenient dashboard.</p>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm card-hover">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-shield-alt text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">Secure Platform</h3>
+                    <p class="text-gray-600">Your projects are stored securely on our dedicated servers.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="submit-page" class="page hidden fade-in">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Submit Your Project</h2>
+                
+                <form id="projectForm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="projectTitle" class="block text-sm font-medium text-gray-700 mb-1">Project Title *</label>
+                            <input type="text" id="projectTitle" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" placeholder="Enter project title">
+                        </div>
+                        <div>
+                            <label for="course" class="block text-sm font-medium text-gray-700 mb-1">Course *</label>
+                            <select id="course" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                                <option value="">Select a course</option>
+                                <option value="CCF">CCF</option>
+                                <option value="GIT">GIT</option>
+                                <option value="ML">ML</option>
+                                <option value="BWD">BWD</option>
+                                <option value="SE">SE</option>
+                                <option value="DA">DA</option>
+                                <option value="AD">AD</option>
+                                <option value="FP">FP</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Project Description *</label>
+                        <textarea id="description" required rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" placeholder="Describe your project..."></textarea>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Project File *</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:bg-gray-50 transition-colors">
+                            <div class="file-input-wrapper">
+                                <div class="cursor-pointer">
+                                    <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-2"></i>
+                                    <p class="text-gray-600">Click to browse files</p>
+                                    <p class="text-sm text-gray-500 mt-1">PDF, DOC, ZIP (Max 100MB)</p>
+                                </div>
+                                <input type="file" id="fileUpload" required>
+                            </div>
+                        </div>
+                        <div id="fileList" class="mt-4 space-y-2"></div>
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-primary hover:bg-secondary text-white font-medium py-2 px-6 rounded-lg flex items-center transition-colors">
+                            <i class="fas fa-paper-plane mr-2"></i> Submit Project
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="submissions-page" class="page hidden fade-in">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">My Submissions</h2>
+                <div class="flex space-x-2">
+                    <button onclick="if(currentUser) loadUserSubmissions(currentUser.id)" class="text-primary hover:text-secondary text-sm font-medium">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Project</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted Date</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                            <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="submissionsTableBody" class="bg-white divide-y divide-gray-200">
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">
+                                Please login to view your submissions.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="guidelines-page" class="page hidden fade-in">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Submission Guidelines</h2>
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">1. File Requirements</h3>
+                        <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                            <li>All submissions must include a PDF report (max 20 pages)</li>
+                            <li>Code files should be submitted in a ZIP archive</li>
+                            <li>Maximum file size per submission: 100MB</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">2. Academic Integrity</h3>
+                        <ul class="list-disc pl-5 text-gray-600 space-y-1">
+                            <li>All work must be original and created by the submitting students</li>
+                            <li>Properly cite all sources used in your project</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<section id="teacher-page" class="page hidden fade-in">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-gray-900">Teacher Dashboard</h2>
+        <button onclick="loadTeacherDashboard()" class="text-primary hover:text-secondary text-sm font-medium">
+            <i class="fas fa-sync-alt"></i> Refresh List
+        </button>
+    </div>
+    
+    <div class="bg-white rounded-xl shadow-sm overflow-hidden overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Project</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Action</th>
+                </tr>
+            </thead>
+            <tbody id="teacherTableBody" class="bg-white divide-y divide-gray-200">
+                </tbody>
+        </table>
+    </div>
+</section>
+    </main>
+
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">Login to ProjectHub</h3>
+                    <button class="close-modal text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                </div>
+                <form id="loginForm">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="loginEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="loginPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-medium py-2 px-4 rounded-lg">Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="signupModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl shadow-lg w-full max-w-md">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-gray-900">Create Account</h3>
+                    <button class="close-modal text-gray-500 hover:text-gray-700"><i class="fas fa-times"></i></button>
+                </div>
+                <form id="signupForm">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                            <input type="text" id="firstName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                            <input type="text" id="lastName" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="signupEmail" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="signupPassword" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary">
+                    </div>
+                    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white font-medium py-2 px-4 rounded-lg">Create Account</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-gray-500">
+            <p>&copy; 2026 ProjectHub. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    // --- Global State ---
+    let currentUser = null;
+    const API_URL = 'http://localhost:3000/api';
+
+    // --- Navigation Logic (WITH LOCK) ---
+    function showPage(pageId) {
+        // 1. SECURITY CHECK for Teacher Page
+        if (pageId === 'teacher') {
+            const isAuthorized = sessionStorage.getItem('adminUnlocked');
+            
+            if (!isAuthorized) {
+                const pin = prompt("🔒 Enter Teacher Access PIN:");
+                
+                // HARDCODED PIN: "X131013"
+                if (pin === "X131013") {
+                    sessionStorage.setItem('adminUnlocked', 'true'); // Remember login
+                    alert("Access Granted");
+                    loadTeacherDashboard(); // Load data immediately
+                } else {
+                    alert("❌ Access Denied!");
+                    return; // Stop! Do not show the page.
+                }
+            } else {
+                // Already authorized? Just refresh data
+                loadTeacherDashboard();
+            }
+        }
+
+        // 2. Normal Page Switching
+        document.querySelectorAll('.page').forEach(page => page.classList.add('hidden'));
+        document.getElementById(`${pageId}-page`).classList.remove('hidden');
+        
+        // 3. Update active state in desktop nav
+        document.querySelectorAll('.nav-link').forEach(l => {
+            l.classList.remove('active', 'border-primary', 'text-gray-900');
+            if (l.dataset.page === pageId) {
+                l.classList.add('active', 'border-primary', 'text-gray-900');
+            } else {
+                l.classList.add('border-transparent', 'text-gray-500');
+            }
+        });
+
+        // 4. Close mobile menu if open
+        document.getElementById('mobile-menu').classList.add('hidden');
+    }
+
+    // Attach Click Events to Nav Links
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage(link.dataset.page);
+        });
+    });
+
+    // Mobile Menu Toggle
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+        document.getElementById('mobile-menu').classList.toggle('hidden');
+    });
+
+    // --- Auth UI Handling ---
+    function updateUI() {
+        const authButtons = document.getElementById('authButtons');
+        const userProfile = document.getElementById('userProfile');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const mobileSignupBtn = document.getElementById('mobileSignupBtn');
+        const mobileLogoutBtn = document.getElementById('mobileLogoutBtn');
+
+        if (currentUser) {
+            // Logged In
+            authButtons.classList.add('hidden');
+            userProfile.classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = currentUser.name;
+            
+            // Mobile
+            mobileLoginBtn.classList.add('hidden');
+            mobileSignupBtn.classList.add('hidden');
+            mobileLogoutBtn.classList.remove('hidden');
+        } else {
+            // Guest
+            authButtons.classList.remove('hidden');
+            userProfile.classList.add('hidden');
+            
+            // Mobile
+            mobileLoginBtn.classList.remove('hidden');
+            mobileSignupBtn.classList.remove('hidden');
+            mobileLogoutBtn.classList.add('hidden');
+        }
+    }
+
+    // --- Modal Handling ---
+    const loginModal = document.getElementById('loginModal');
+    const signupModal = document.getElementById('signupModal');
+
+    function toggleModal(modal, show) {
+        show ? modal.classList.remove('hidden') : modal.classList.add('hidden');
+    }
+
+    document.getElementById('loginBtn').addEventListener('click', () => toggleModal(loginModal, true));
+    document.getElementById('mobileLoginBtn').addEventListener('click', () => toggleModal(loginModal, true));
+    
+    document.getElementById('signupBtn').addEventListener('click', () => toggleModal(signupModal, true));
+    document.getElementById('mobileSignupBtn').addEventListener('click', () => toggleModal(signupModal, true));
+
+    document.querySelectorAll('.close-modal').forEach(btn => {
+        btn.addEventListener('click', () => {
+            toggleModal(loginModal, false);
+            toggleModal(signupModal, false);
+        });
+    });
+
+    // --- Backend Integration ---
+
+    // 1. Login
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        const btn = e.target.querySelector('button');
+
+        try {
+            btn.textContent = 'Signing in...';
+            btn.disabled = true;
+
+            const res = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                currentUser = data;
+                updateUI();
+                toggleModal(loginModal, false);
+                loadUserSubmissions(currentUser.id);
+                alert(`Welcome back, ${currentUser.name}!`);
+            } else {
+                alert(data.error || 'Login failed');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Connection error. Is the server running?');
+        } finally {
+            btn.textContent = 'Sign In';
+            btn.disabled = false;
+        }
+    });
+
+    // 2. Register
+    document.getElementById('signupForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fName = document.getElementById('firstName').value;
+        const lName = document.getElementById('lastName').value;
+        const email = document.getElementById('signupEmail').value;
+        const password = document.getElementById('signupPassword').value;
+
+        try {
+            const res = await fetch(`${API_URL}/register`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: `${fName} ${lName}`, email, password })
+            });
+            const data = await res.json();
+
+            if (res.ok) {
+                alert('Account created! Please login.');
+                toggleModal(signupModal, false);
+                toggleModal(loginModal, true);
+            } else {
+                alert(data.error || 'Registration failed');
+            }
+        } catch (err) {
+            alert('Connection error');
+        }
+    });
+
+    // 3. Logout
+    function logout() {
+        currentUser = null;
+        sessionStorage.removeItem('adminUnlocked'); // Lock teacher dashboard again
+        updateUI();
+        document.getElementById('submissionsTableBody').innerHTML = `
+            <tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">Please login to view submissions.</td></tr>
+        `;
+        showPage('home');
+        alert('Logged out successfully');
+    }
+    document.getElementById('logoutBtn').addEventListener('click', logout);
+    document.getElementById('mobileLogoutBtn').addEventListener('click', logout);
+
+    // 4. File Upload UI
+    const fileInput = document.getElementById('fileUpload');
+    const fileList = document.getElementById('fileList');
+    
+    fileInput.addEventListener('change', function() {
+        fileList.innerHTML = '';
+        if (this.files[0]) {
+            const file = this.files[0];
+            fileList.innerHTML = `
+                <div class="flex items-center justify-between p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                    <span class="text-sm font-medium text-blue-800 truncate">${file.name}</span>
+                    <span class="text-xs text-blue-600">${(file.size/1024).toFixed(1)} KB</span>
+                </div>
+            `;
+        }
+    });
+
+    // 5. Submit Project (Student)
+    document.getElementById('projectForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!currentUser) return alert('Please login first');
+
+        const formData = new FormData();
+        formData.append('userId', currentUser.id);
+        formData.append('title', document.getElementById('projectTitle').value);
+        formData.append('course', document.getElementById('course').value);
+        formData.append('description', document.getElementById('description').value);
+        
+        if (fileInput.files[0]) {
+            formData.append('projectFile', fileInput.files[0]);
+        }
+
+        const btn = e.target.querySelector('button');
+        try {
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Uploading...';
+            btn.disabled = true;
+
+            const res = await fetch(`${API_URL}/submit`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (res.ok) {
+                alert('Project Submitted Successfully!');
+                e.target.reset();
+                fileList.innerHTML = '';
+                loadUserSubmissions(currentUser.id);
+                showPage('submissions');
+            } else {
+                alert('Submission failed');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Error submitting project');
+        } finally {
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i> Submit Project';
+            btn.disabled = false;
+        }
+    });
+
+    // 6. Load Student Submissions
+    async function loadUserSubmissions(userId) {
+        const tbody = document.getElementById('submissionsTableBody');
+        tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center">Loading...</td></tr>';
+
+        try {
+            const res = await fetch(`${API_URL}/submissions/${userId}`);
+            const projects = await res.json();
+
+            tbody.innerHTML = '';
+            if (projects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-gray-500">No submissions found.</td></tr>';
+                return;
+            }
+
+            projects.forEach(p => {
+                const webPath = p.file_path.replace(/\\/g, '/');
+                // Status Color Logic
+                let badgeColor = 'bg-yellow-100 text-yellow-800'; // Default: Under Review
+                if (p.status === 'Approved') badgeColor = 'bg-green-100 text-green-800';
+                if (p.status === 'Rejected') badgeColor = 'bg-red-100 text-red-800';
+
+                const row = `
+                    <tr>
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-medium text-gray-900">${p.title}</div>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${p.course}</td>
+                        <td class="px-6 py-4 text-sm text-gray-500">${p.date}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${badgeColor}">${p.status}</span>
+                        </td>
+                        <td class="px-6 py-4 text-right text-sm font-medium">
+                            <a href="http://localhost:3000/${webPath}" target="_blank" class="text-primary hover:text-secondary font-bold">Download</a>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="5" class="px-6 py-4 text-center text-red-500">Error loading data</td></tr>';
+        }
+    }
+
+    // --- TEACHER FUNCTIONS ---
+
+    // 7. Load All Submissions (Teacher)
+    async function loadTeacherDashboard() {
+        const tbody = document.getElementById('teacherTableBody');
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Loading...</td></tr>';
+
+        try {
+            const res = await fetch(`${API_URL}/admin/submissions`);
+            const projects = await res.json();
+
+            tbody.innerHTML = '';
+            if (projects.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No submissions yet.</td></tr>';
+                return;
+            }
+
+            projects.forEach(p => {
+                const webPath = p.file_path.replace(/\\/g, '/');
+                
+                const statusOptions = ['Under Review', 'Approved', 'Revision Needed', 'Rejected']
+                    .map(s => `<option value="${s}" ${p.status === s ? 'selected' : ''}>${s}</option>`)
+                    .join('');
+
+                const row = `
+                    <tr>
+                        <td class="px-6 py-4">
+                            <div class="text-sm font-medium text-gray-900">${p.student_name}</div>
+                            <div class="text-sm text-gray-500">${p.email || ''}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="text-sm text-gray-900 font-medium">${p.title}</div>
+                            <div class="text-sm text-gray-500">${p.course}</div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <select onchange="updateProjectStatus(${p.id}, this.value)" 
+                                    class="text-sm border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 bg-gray-50">
+                                ${statusOptions}
+                            </select>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="http://localhost:3000/${webPath}" target="_blank" class="text-primary hover:text-secondary text-sm font-medium">View File</a>
+                        </td>
+                    </tr>
+                `;
+                tbody.insertAdjacentHTML('beforeend', row);
+            });
+        } catch (err) {
+            console.error(err);
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-red-500">Error loading data</td></tr>';
+        }
+    }
+
+    // 8. Update Status (Teacher)
+    async function updateProjectStatus(projectId, newStatus) {
+        try {
+            const res = await fetch(`${API_URL}/admin/update-status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ projectId, status: newStatus })
+            });
+            
+            if (res.ok) {
+                console.log("Status updated!");
+            } else {
+                alert("Failed to update status");
+            }
+        } catch (err) {
+            alert("Connection error");
+        }
+    }
+    
+    // Initialize Default View
+    updateUI();
+</script>
+</body>
+</html>
